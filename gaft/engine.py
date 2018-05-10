@@ -125,7 +125,7 @@ class GAEngine(object):
         self.selection = selection
         self.crossover = crossover
         self.mutation = mutation
-        self.analysis = [] if analysis is None else [a() for a in analysis]
+        self.analysis = [] if analysis is None else [a for a in analysis]
 
         # Maxima and minima in population.
         self._fmax, self._fmin, self._fmean = None, None, None
@@ -194,7 +194,7 @@ class GAEngine(object):
 
                 # Run all analysis if needed.
                 for a in self.analysis:
-                    if g % a.interval == 0:
+                    if (g+1) % a.interval == 0:
                         a.register_step(g=g, population=self.population, engine=self)
         except Exception as e:
             # Log exception info.
@@ -208,6 +208,7 @@ class GAEngine(object):
             # Perform the analysis post processing.
             for a in self.analysis:
                 a.finalize(population=self.population, engine=self)
+            self.best_indv = best_indv
 
     def _update_statvars(self):
         '''
